@@ -45,9 +45,15 @@ def main():
                 # Preencher o formulário com o nome e sobrenome
                 gmail.account_input_name(bot, full_name)
 
+                # Preencher o formulário com a idade e gênero
                 gmail.account_input_age_gender(bot, "Homem")
 
+                # Preencher o formulário com o nome de usuário
                 gmail.account_username(bot, full_name)
+
+                # Preencher o formulário com a senha
+                gmail.account_password(bot, "12345678")
+
                 ...
             except Exception as error:
                 error_message, error_line, task_name = eval(str(error))
