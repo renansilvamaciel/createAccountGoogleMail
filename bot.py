@@ -8,7 +8,7 @@ import os
 
 # local libs
 import gmail
-
+import config
 
 # Disable errors if we are not connected to Maestro
 BotMaestroSDK.RAISE_NOT_CONNECTED = False
@@ -21,6 +21,7 @@ def main():
     maestro = BotMaestroSDK.from_sys_args()
     execution = maestro.get_execution()
     resources_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resources')
+    # maestro.login()
 
     bot = WebBot()
 
@@ -42,19 +43,27 @@ def main():
                 # Navegador até o site de criar conta do Gmail
                 gmail.open_google(bot)
 
-                # Preencher o formulário com o nome e sobrenome
-                gmail.account_input_name(bot, full_name)
+                # # Preencher o formulário com o nome e sobrenome
+                # gmail.account_input_name(bot, full_name)
+                #
+                # # Preencher o formulário com a idade e gênero
+                # gmail.account_input_age_gender(bot, "Homem")
+                #
+                # # Preencher o formulário com o nome de usuário
+                # gmail.account_username(bot, full_name)
+                #
+                # # Preencher o formulário com a senha
+                # gmail.account_password(bot, "HomeSwiFi@01983355")
+                #
+                # # Preencher o formulário com o número de telefone e codigo de verificação
+                # gmail.account_phone_verification(bot, "")
+                #
+                # ...
 
-                # Preencher o formulário com a idade e gênero
-                gmail.account_input_age_gender(bot, "Homem")
-
-                # Preencher o formulário com o nome de usuário
-                gmail.account_username(bot, full_name)
-
-                # Preencher o formulário com a senha
-                gmail.account_password(bot, "12345678")
-
-                ...
+                # Envia status = 'Sucesso' para a BotMaestro
+                maestro.finish_task(task_id=execution.task_id,
+                                    status=AutomationTaskFinishStatus.SUCCESS,
+                                    message="Execução finalizada com sucesso!")
             except Exception as error:
                 error_message, error_line, task_name = eval(str(error))
                 print(f'{error_message} \n Error line number:{error_line} \n Task Name: {task_name}')
@@ -64,6 +73,18 @@ def main():
         error_message, error_line, task_name = eval(str(error))
         print(f'Error Message: {error_message} \n Error line number:{error_line} \n Task Name: {task_name}')
         ...
+
+        # Envia alerta de erro. Usado para notificação via e-mail
+        maestro.alert(task_id=execution.task_id,
+                      title=config.RPA_FULL_NAME,
+                      message=f"f'{error_message} Error line number:{error_line} Task Name: {task_name}'",
+                      alert_type=AlertType.ERROR)
+
+        # Envia status = 'Sucesso' para a BotMaestro
+        maestro.finish_task(task_id=execution.task_id,
+                            status=AutomationTaskFinishStatus.FAILED,
+                            message="Erro ao executar a tarefa!")
+
     finally:
         bot.stop_browser()
 

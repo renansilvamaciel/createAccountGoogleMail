@@ -107,6 +107,7 @@ def account_username(bot: WebBot, full_name):
 def account_password(bot: WebBot, password: str):
 
     try:
+
         # Digita a senha
         bot.find_element("//input[@name='Passwd']", By.XPATH, ensure_visible=True, ensure_clickable=True).send_keys(password)
         bot.wait(10000)
@@ -117,10 +118,32 @@ def account_password(bot: WebBot, password: str):
         # clica em próximo
         bot.find_element("//span[text()='Próxima']", By.XPATH, ensure_visible=True, ensure_clickable=True).click()
 
+        # TODO: Colocar uma validação para verificar se a senha é forte o suficiente
+
         # validar carregamento da próxima página:
-        if not bot.find_element("//input[@name='Passwd']", By.XPATH, ensure_visible=True, ensure_clickable=True, waiting_time=30000):  # espera até 30 segundos
+        if not bot.find_element("//input[@id='phoneNumberId']", By.XPATH, ensure_visible=True, ensure_clickable=True, waiting_time=30000):  # espera até 30 segundos
             raise Exception("Falha ao carregar a proxima pagina")
 
     except Exception as error:
         exc_type, exc_value, exc_traceback = sys.exc_info()
         raise ValueError(str(error), exc_traceback.tb_lineno, exc_traceback.tb_frame.f_code.co_name)
+
+
+def account_phone_verification(bot, telefone):
+
+        try:
+            # Digita o telefone
+            bot.find_element("//input[@id='phoneNumberId']", By.XPATH, ensure_visible=True, ensure_clickable=True).send_keys(telefone)
+
+            # clica em próximo
+            bot.find_element("//span[text()='Próxima']", By.XPATH, ensure_visible=True, ensure_clickable=True).click()
+
+            # validar carregamento da próxima página:
+            if not bot.find_element("//input[@id='code']", By.XPATH, ensure_visible=True, ensure_clickable=True, waiting_time=30000):  # espera até 30 segundos
+                raise Exception("Falha ao carregar a proxima pagina")
+
+            # TODO: Implementar a verificação do código de verificação via API de SMS
+
+        except Exception as error:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            raise ValueError(str(error), exc_traceback.tb_lineno, exc_traceback.tb_frame.f_code.co_name)
